@@ -1,0 +1,137 @@
+name: Sample Workflow
+on: 
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+env:
+  AWS_REGION:       ${{ secrets.AWS_REGION }}
+  ECR_BACKEND_URL:  ${{ secrets.ECR_BACKEND_URL }}
+  ECR_FRONTEND_URL: ${{ secrets.ECR_FRONTEND_URL }}
+jobs:
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+      
+      - name: Test backend
+        working-directory: backend
+        run: npm test --if-present
+        env:
+          NODE_ENV: test
+      
+      - name: Setup up Node.js (frontend)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend (compile check)
+        working-directory: frontend
+        run: npm run build
+        env:
+          VITE_BACKEND_URL: http://localhost:8888
+    
+  build-and-push:
+    name: Build and Push to ECR
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.event_name == 'push'
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tag }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Generate image tag
+        id: meta
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          echo "tag=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "Image tag: ${SHORT_SHA}"
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+      
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Build backend image
+        working-directory: backend
+        run: |
+          docker build \
+            --tag ${{ env.ECR_BACKEND_URL }}:${{ steps.meta.outputs.tag }} \
+            --tag ${{ env.ECR_BACKEND_URL }}:latest \
+            --file Dockerfile \
+            .
+      - name: Push backend image
+        run: |
+          docker push ${{ env.ECR_BACKEND_URL }}:${{ steps.meta.outputs.tag }}
+          docker push ${{ env.ECR_BACKEND_URL }}:latest
+      - name: Build frontend image
+        working-directory: frontend
+        run: |
+          docker build \
+            --tag ${{ env.ECR_FRONTEND_URL }}:${{ steps.meta.outputs.tag }} \
+            --tag ${{ env.ECR_FRONTEND_URL }}:latest \
+            --file Dockerfile \
+            --build-arg VITE_BACKEND_URL=${{ secrets.BACKEND_PUBLIC_URL }} \
+            .
+      - name: Push frontend image
+        run: |
+          docker push ${{ env.ECR_FRONTEND_URL }}:${{ steps.meta.outputs.tag }}
+          docker push ${{ env.ECR_FRONTEND_URL }}:latest
+      - name: Print image summary
+        run: |
+          echo "### Images pushed to ECR" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | Tag |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend  | \`${{ steps.meta.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend | \`${{ steps.meta.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
+
+  # ── Job 3: Deploy (Phase 3 — uncomment when EC2 is ready) ─────────────────
+  # deploy:
+  #   name: Deploy to EC2
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-push
+  #   if: github.event_name == 'push'
+  #   steps:
+  #     - name: SSH into EC2 and redeploy
+  #       uses: appleboy/ssh-action@v1
+  #       with:
+  #         host:     ${{ secrets.EC2_HOST }}
+  #         username: ec2-user
+  #         key:      ${{ secrets.EC2_SSH_KEY }}
+  #         script: |
+  #           cd /home/ec2-user/idurar-erp-crm
+  #           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
+  #             | docker login --username AWS --password-stdin ${{ secrets.ECR_BACKEND_URL }}
+  #           docker compose pull
+  #           docker compose up -d --remove-orphans

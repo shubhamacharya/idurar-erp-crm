@@ -1,0 +1,24 @@
+# 1. Install GitHub CLI if not already installed
+# macOS:
+brew install gh
+# Linux:
+sudo apt install gh   # or dnf install gh
+
+# 2. Authenticate GitHub CLI (one time only)
+gh auth login
+# Choose: GitHub.com → HTTPS → Login with a web browser
+
+# 3. Make the script executable
+chmod +x scripts/push-secrets-to-github.sh
+
+# 4. Run from repo root
+./scripts/push-secrets-to-github.sh
+
+# ── From your terraform/ecr/ directory (already done if you ran it earlier) ──
+# If you haven't run push-secrets-to-github.sh yet:
+chmod +x scripts/push-secrets-to-github.sh
+./scripts/push-secrets-to-github.sh
+
+# ── From your idurar-erp-crm repo root ───────────────────────────────────────
+chmod +x setup-cicd.sh
+./setup-cicd.sh
