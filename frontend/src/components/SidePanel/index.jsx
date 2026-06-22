@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useCrudContext } from '@/context/crud';
-import { Grid, Layout, Drawer } from 'antd';
+import { Drawer } from 'antd';
 import CollapseBox from '../CollapseBox';
 
-const { useBreakpoint } = Grid;
+// const { useBreakpoint } = Grid;
 
 export default function SidePanel({ config, topContent, bottomContent, fixHeaderPanel }) {
 
