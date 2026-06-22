@@ -1,44 +1,52 @@
-output "backend_repository_url" {
-  description = "ECR URI for the backend image — use this in your CI pipeline"
-  value       = aws_ecr_repository.backend.repository_url
-}
-
-output "frontend_repository_url" {
-  description = "ECR URI for the frontend image — use this in your CI pipeline"
-  value       = aws_ecr_repository.frontend.repository_url
-}
-
-output "aws_account_id" {
-  description = "Your AWS account ID"
-  value       = data.aws_caller_identity.current.account_id
-}
+# terraform/outputs.tf
+# Root module outputs — sourced from child modules.
+# push-secrets-to-github.sh reads these directly.
 
 output "aws_region" {
-  description = "Region where ECR repositories were created"
+  description = "AWS region"
   value       = var.aws_region
 }
 
+# ECR — single repo
+output "ecr_repo_url" {
+  description = "Single ECR repository URL — used as ECR_REPO_URL GitHub Secret"
+  value       = module.registry.repository_url
+}
+
 output "ecr_registry" {
-  description = "ECR registry hostname — used in docker login command"
-  value       = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
+  description = "ECR registry hostname"
+  value       = module.registry.ecr_registry
+}
+
+# IAM — GitHub Actions credentials
+output "github_actions_access_key_id" {
+  description = "AWS_ACCESS_KEY_ID — add as GitHub Secret"
+  value       = module.iam.github_actions_access_key_id
+}
+
+output "github_actions_secret_access_key" {
+  description = "AWS_SECRET_ACCESS_KEY — add as GitHub Secret"
+  value       = module.iam.github_actions_secret_access_key
+  sensitive   = true
 }
 
 output "github_actions_iam_user" {
   description = "IAM username created for GitHub Actions"
-  value       = aws_iam_user.github_actions.name
+  value       = module.iam.github_actions_iam_user
 }
 
-output "github_actions_access_key_id" {
-  description = "AWS_ACCESS_KEY_ID — add this as a GitHub Secret"
-  value       = aws_iam_access_key.github_actions.id
+# EC2 — populated after Phase 3 apply
+output "ec2_public_ip" {
+  description = "EC2 public IP — used as EC2_HOST GitHub Secret"
+  value       = module.ec2.ec2_public_ip
 }
 
-output "github_actions_secret_access_key" {
-  description = "AWS_SECRET_ACCESS_KEY — add this as a GitHub Secret (sensitive)"
-  value       = aws_iam_access_key.github_actions.secret
-  sensitive   = true
+output "app_url" {
+  description = "Frontend URL"
+  value       = module.ec2.app_url
 }
 
-# ── Data sources ──────────────────────────────────────────────────────────────
-
-data "aws_caller_identity" "current" {}
+output "ssh_command" {
+  description = "SSH command to connect to EC2"
+  value       = module.ec2.ssh_command
+}

@@ -48,9 +48,9 @@ export default function AutoCompleteAsync({
     }
   };
 
-  const handleOnSelect = (value) => {
-    setCurrentValue(value[outputValue] || value); // set nested value or value
-  };
+  // const handleOnSelect = (value) => {
+  //   setCurrentValue(value[outputValue] || value); // set nested value or value
+  // };
 
   const [, cancel] = useDebounce(
     () => {
@@ -82,7 +82,7 @@ export default function AutoCompleteAsync({
     return () => {
       cancel();
     };
-  }, [debouncedValue]);
+  }, [debouncedValue,asyncSearch,cancel,onFetch,searchFields]);
 
   const onSearch = (searchText) => {
     isSearching.current = true;
@@ -109,7 +109,7 @@ export default function AutoCompleteAsync({
       onChange(value[outputValue] || value);
       isUpdating.current = false;
     }
-  }, [value]);
+  }, [value,onChange,outputValue]);
 
   return (
     <Select

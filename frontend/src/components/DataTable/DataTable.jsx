@@ -6,7 +6,6 @@ import {
   DeleteOutlined,
   EllipsisOutlined,
   RedoOutlined,
-  ArrowRightOutlined,
   ArrowLeftOutlined,
 } from '@ant-design/icons';
 import { Dropdown, Table, Button, Input } from 'antd';
@@ -155,7 +154,7 @@ export default function DataTable({ config, extra = [] }) {
   const handelDataTableLoad = useCallback((pagination) => {
     const options = { page: pagination.current || 1, items: pagination.pageSize || 10 };
     dispatch(crud.list({ entity, options }));
-  }, []);
+  }, [dispatch, entity]);
 
   const filterTable = (e) => {
     const value = e.target.value;
@@ -173,7 +172,7 @@ export default function DataTable({ config, extra = [] }) {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [dispatcher]);
 
   return (
     <>

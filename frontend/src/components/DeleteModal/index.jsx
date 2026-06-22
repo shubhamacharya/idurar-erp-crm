@@ -40,7 +40,7 @@ export default function DeleteModal({ config }) {
 
       setDisplayItem(labels);
     }
-  }, [isSuccess, current]);
+  }, [isSuccess, current, deleteModalLabels, dispatch, entity, modal]);
 
   const handleOk = () => {
     const id = current._id;

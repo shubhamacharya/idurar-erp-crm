@@ -22,7 +22,7 @@ export default function DeleteModal({ config, children }) {
       modal.close();
       dispatch(crud.list({ entity }));
     }
-  }, [isSuccess]);
+  }, [isSuccess, dispatch, entity, modal]);
 
   const handleOk = () => {
     const id = current._id;

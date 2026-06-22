@@ -1,32 +1,34 @@
 import { useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import Dropdown from './Dropdown';
 import './styles.css';
 
 function App() {
-  const [vegetagle, setVegetable] = useState(undefined);
-  const [fruit, setFruit] = useState(undefined);
+  const [vegetable, setVegetable] = useState();
+  const [fruit, setFruit] = useState();
 
   return (
     <div className="App">
       <h1>Hello CodeSandbox</h1>
       <h2>Start editing to see some magic happen!</h2>
+
       <Dropdown
         placeholder="Select Vegetable"
-        value={vegetagle}
-        onChange={(v) => setVegetable(v)}
+        value={vegetable}
+        onChange={setVegetable}
         options={['Tomato', 'Cucumber', 'Potato']}
       />
+
       <Dropdown
         placeholder="Select Fruit"
         value={fruit}
-        onChange={(v) => setFruit(v)}
+        onChange={setFruit}
         options={['Apple', 'Banana', 'Orange', 'Mango']}
       />
     </div>
   );
 }
 
-const rootElement = document.getElementById('root');
-ReactDOM.render(<App />, rootElement);
+const root = createRoot(document.getElementById('root'));
+root.render(<App />);

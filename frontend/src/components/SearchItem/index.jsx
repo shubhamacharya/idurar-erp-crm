@@ -54,7 +54,7 @@ function SearchItemComponent({ config, onRerender }) {
     return () => {
       cancel();
     };
-  }, [debouncedValue]);
+  }, [debouncedValue, cancel, dispatch, entity, searchFields]);
 
   const onSearch = (searchText) => {
     if (searchText && searchText != '') {

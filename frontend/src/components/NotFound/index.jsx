@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import useLanguage from '@/locale/useLanguage';
 
-export default function NotFound({ entity = '' }) {
+export default function NotFound(/*{ entity = '' }*/) {
   const translate = useLanguage();
-
   const navigate = useNavigate();
 
   return (

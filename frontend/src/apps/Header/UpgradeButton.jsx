@@ -1,4 +1,4 @@
-import { Avatar, Popover, Button, Badge, Col, List } from 'antd';
+import { Button, Badge } from 'antd';
 
 // import Notifications from '@/components/Notification';
 

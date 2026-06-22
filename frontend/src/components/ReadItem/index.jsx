@@ -33,7 +33,7 @@ export default function ReadItem({ config }) {
       list.push({ propsKey, label: propsTitle, value: value });
     });
     setListState(list);
-  }, [currentResult]);
+  }, [currentResult, dateFormat, readColumns]);
 
   const show = isReadBoxOpen ? { display: 'block', opacity: 1 } : { display: 'none', opacity: 0 };
 

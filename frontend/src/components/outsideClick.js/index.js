@@ -29,13 +29,13 @@ const Dropdown = ({ value, options, placeholder = 'Select', onChange }) => {
 
   return (
     <div ref={node} className="dropdown">
-      <button className="dropdown-toggler" onClick={(e) => setOpen(!open)}>
+      <button className="dropdown-toggler" onClick={() => setOpen(!open)}>
         {value || placeholder}
       </button>
       {open && (
         <ul className="dropdown-menu">
           {options.map((opt) => (
-            <li className="dropdown-menu-item" onClick={(e) => handleChange(opt)}>
+            <li className="dropdown-menu-item" key={opt} onClick={() => handleChange(opt)}>
               {opt}
             </li>
           ))}

@@ -42,7 +42,7 @@ export default function CreateForm({ config, formElements, withUpload = false })
       dispatch(crud.resetAction({ actionType: 'create' }));
       dispatch(crud.list({ entity }));
     }
-  }, [isSuccess]);
+  }, [isSuccess, collapsedBox, dispatch, entity, form, panel, readBox]);
 
   return (
     <Loading isLoading={isLoading}>

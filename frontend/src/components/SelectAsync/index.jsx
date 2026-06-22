@@ -30,7 +30,7 @@ const SelectAsync = ({
   const { result, isLoading: fetchIsLoading, isSuccess } = useFetch(asyncList);
   useEffect(() => {
     isSuccess && setOptions(result);
-  }, [isSuccess]);
+  }, [isSuccess, result]);
 
   const labels = (optionField) => {
     return displayLabels.map((x) => optionField[x]).join(' ');
@@ -41,7 +41,7 @@ const SelectAsync = ({
       setCurrentValue(val);
       onChange(val);
     }
-  }, [value]);
+  }, [value, onChange, outputValue]);
 
   const handleSelectChange = (newValue) => {
     if (newValue === 'redirectURL') {

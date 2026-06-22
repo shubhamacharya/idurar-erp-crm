@@ -78,7 +78,7 @@ export default function UpdateForm({ config, formElements, withUpload = false })
       form.resetFields();
       form.setFieldsValue(newValues);
     }
-  }, [current]);
+  }, [current, form]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -89,7 +89,7 @@ export default function UpdateForm({ config, formElements, withUpload = false })
       dispatch(crud.resetAction({ actionType: 'update' }));
       dispatch(crud.list({ entity }));
     }
-  }, [isSuccess]);
+  }, [isSuccess, collapsedBox, dispatch, entity, form, panel, readBox]);
 
   const { isEditBoxOpen } = state;
 
