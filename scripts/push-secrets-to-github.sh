@@ -168,7 +168,8 @@ push_secret() {
   printf "  Setting %-30s ... " "$name"
 
   echo "$value" | gh secret set "$name" \
-    --repo "$GITHUB_REPO"
+    --repo "$GITHUB_REPO" \
+    --env production
 
   echo -e "${GREEN}done${NC}"
 }
@@ -186,8 +187,9 @@ if [[ -n "$EC2_IP" ]]; then
     printf "  Setting %-30s ... " "EC2_SSH_KEY"
 
     echo "$SSH_PRIVATE_KEY" | gh secret set EC2_SSH_KEY \
-      --repo "$GITHUB_REPO"
-
+      --repo "$GITHUB_REPO" \
+      --env production
+      
     echo -e "${GREEN}done${NC}"
   fi
 
