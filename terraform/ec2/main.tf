@@ -40,6 +40,16 @@ data "aws_ami" "ubuntu_2404" {
   }
 }
 
+variable "vpc_id" {
+  description = "VPC ID — from networking module"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "Public subnet ID to launch EC2 into — from networking module"
+  type        = string
+}
+
 # ── SSM Parameters (secrets store) ───────────────────────────────────────────
 # SecureString encrypts at rest using AWS-managed KMS key — free tier.
 # EC2 reads these at boot via the IAM role — no plaintext env vars anywhere.
@@ -159,6 +169,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 resource "aws_security_group" "app" {
   name        = "${var.project_name}-app-sg"
   description = "idurar application security group"
+  vpc_id              = var.vpc_id
 
   # HTTP — frontend served by Nginx
   ingress {
@@ -205,6 +216,8 @@ resource "aws_instance" "app" {
   instance_type          = "t2.micro"          # Free Tier: 750 hrs/month
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
   vpc_security_group_ids = [aws_security_group.app.id]
+  key_name               = aws_key_pair.ec2_key.key_name
+  subnet_id              = var.subnet_id
 
   # Root volume — 8GB default is enough, gp2 is Free Tier eligible
   root_block_device {
@@ -247,10 +260,5 @@ resource "aws_cloudwatch_log_group" "frontend" {
 # ── Locals ────────────────────────────────────────────────────────────────────
 
 locals {
-  common_tags = {
-    Project     = var.project_name
-    Environment = var.environment
-    ManagedBy   = "terraform"
-    Owner       = var.owner
-  }
+  common_tags = var.tags
 }

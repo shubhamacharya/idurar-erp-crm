@@ -52,3 +52,4 @@ variable "jwt_secret" {
     error_message = "JWT secret must be at least 32 characters long"
   }
 }
+
