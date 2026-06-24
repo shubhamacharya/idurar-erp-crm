@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Form, Divider } from 'antd';
 import dayjs from 'dayjs';
-import { Button, Tag } from 'antd';
+import { Button } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,7 +16,6 @@ import Loading from '@/components/Loading';
 import { CloseCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { settingsAction } from '@/redux/settings/actions';
 // import { StatusTag } from '@/components/Tag';
 
 function SaveForm({ form, translate }) {

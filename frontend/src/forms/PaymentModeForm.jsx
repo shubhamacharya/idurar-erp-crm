@@ -1,9 +1,8 @@
-import React from 'react';
 import { Switch, Form, Input } from 'antd';
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import useLanguage from '@/locale/useLanguage';
 
-export default function PaymentModeForm({ isUpdateForm = false }) {
+export default function PaymentModeForm() {
   const translate = useLanguage();
   return (
     <>

@@ -22,3 +22,81 @@ chmod +x scripts/push-secrets-to-github.sh
 # ── From your idurar-erp-crm repo root ───────────────────────────────────────
 chmod +x setup-cicd.sh
 ./setup-cicd.sh
+
+Step 3.1 — MongoDB Atlas Free Cluster
+Do this manually (Atlas has no good free-tier Terraform flow without a billing account):
+1. Go to https://cloud.mongodb.com
+2. Sign up / log in
+3. Create a new project → name it "idurar"
+4. Build a Database → M0 Free tier → Provider: AWS → Region: Mumbai (ap-south-1)
+5. Cluster name: idurar-cluster
+6. Create cluster (takes ~3 min)
+After cluster is ready:
+Security → Database Access → Add Database User
+  Username: idurar-app
+  Password: generate a strong password, copy it
+  Role: readWriteAnyDatabase
+
+Security → Network Access → Add IP Address
+  → Allow access from anywhere: 0.0.0.0/0
+  (we'll lock this to EC2 IP after provisioning)
+
+Clusters → Connect → Drivers → Node.js
+  Copy the connection string — looks like:
+  mongodb+srv://idurar-app:<password>@idurar-cluster.xxxxx.mongodb.net/idurar
+  Replace <password> with your actual password
+
+
+Run it — step by step
+Step 1 — Fill in terraform.tfvars
+bash# Get your public IP
+curl -s ifconfig.me
+
+# Generate a JWT secret
+openssl rand -hex 32
+Open terraform/ec2/terraform.tfvars and fill in:
+
+my_ip — your IP from above
+mongodb_uri — the Atlas connection string from Step 3.1
+jwt_secret — the openssl output
+
+Step 2 — Create SSH key pair
+bash# Generate key locally
+ssh-keygen -t ed25519 -f ~/.ssh/idurar-key -C "idurar-ec2"
+
+# Import the public key to AWS
+aws ec2 import-key-pair \
+  --key-name idurar-key \
+  --public-key-material fileb://~/.ssh/idurar-key.pub \
+  --region ap-south-1
+Then add key_name = "idurar-key" to the aws_instance resource in main.tf — it's already there as a comment placeholder.
+Step 3 — Apply
+bashcd terraform/ec2
+terraform init
+terraform plan
+terraform apply
+Step 4 — After apply, add 2 more GitHub Secrets
+bash# Get the EC2 IP from terraform output
+terraform output ec2_public_ip
+
+# Go to GitHub → Settings → Secrets → Actions and add:
+# EC2_HOST       = <ec2_public_ip from above>
+# EC2_SSH_KEY    = <contents of ~/.ssh/idurar-key>
+cat ~/.ssh/idurar-key
+Step 5 — Replace the workflow file
+bashcp ci-cd-updated.yml .github/workflows/ci-cd.yml
+git add .github/workflows/ci-cd.yml terraform/ec2/
+git commit -m "feat: Phase 3 EC2 deployment with Terraform"
+git push origin main
+This push triggers the full 3-job pipeline — Lint → Build → Deploy.
+
+What to watch after the push:
+bash# Watch EC2 bootstrap logs (first boot only)
+ssh -i ~/.ssh/idurar-key.pem ec2-user@<EC2_IP>
+sudo tail -f /var/log/userdata.log
+
+# After bootstrap completes (~3-4 min), check containers
+docker ps
+
+# Hit the app
+curl http://<EC2_IP>/api/health

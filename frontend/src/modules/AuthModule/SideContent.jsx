@@ -1,13 +1,10 @@
-import { Space, Layout, Divider, Typography } from 'antd';
+import { Layout, Typography } from 'antd';
 import logo from '@/style/images/idurar-crm-erp.svg';
-import useLanguage from '@/locale/useLanguage';
-import { useSelector } from 'react-redux';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 export default function SideContent() {
-  const translate = useLanguage();
 
   return (
     <Content

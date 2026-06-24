@@ -1,9 +1,9 @@
 import useLanguage from '@/locale/useLanguage';
 import { Select } from 'antd';
 import { generate as uniqueId } from 'shortid';
-const translate = useLanguage()
 
 export default function SelectTag({ options, defaultValue }) {
+  const translate = useLanguage()
   return (
     <Select
       defaultValue={defaultValue}

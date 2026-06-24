@@ -7,7 +7,6 @@ import {
   RedoOutlined,
   PlusOutlined,
   EllipsisOutlined,
-  ArrowRightOutlined,
   ArrowLeftOutlined,
 } from '@ant-design/icons';
 import { Dropdown, Table, Button } from 'antd';

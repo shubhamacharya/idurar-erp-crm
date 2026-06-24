@@ -1,7 +1,6 @@
 import { ErpContextProvider } from '@/context/erp';
 
 import { Layout } from 'antd';
-import { useSelector } from 'react-redux';
 
 const { Content } = Layout;
 

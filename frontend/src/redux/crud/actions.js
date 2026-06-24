@@ -3,7 +3,7 @@ import { request } from '@/request';
 
 export const crud = {
   resetState:
-    (props = {}) =>
+    (props = {}) => // eslint-disable-line no-unused-vars
     async (dispatch) => {
       dispatch({
         type: actionTypes.RESET_STATE,

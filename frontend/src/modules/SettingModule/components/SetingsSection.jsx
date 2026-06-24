@@ -1,5 +1,4 @@
 import { Col, Divider, Row, Typography } from 'antd';
-import { useSelector } from 'react-redux';
 
 const { Title, Text } = Typography;
 

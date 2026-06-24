@@ -1,11 +1,10 @@
-import React from 'react';
 
 import { Layout } from 'antd';
-import { Divider, Row, Col } from 'antd';
+import { Row, Col } from 'antd';
 
 const { Content } = Layout;
 
-const TopCard = ({ title, cardContent }) => {
+const TopCard = ({ title }) => {
   return (
     <div
       className="whiteBox shadow"

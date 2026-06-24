@@ -1,5 +1,3 @@
-import React from 'react';
-
 import useLanguage from '@/locale/useLanguage';
 
 import { Switch } from 'antd';
@@ -49,7 +47,7 @@ export default function PaymentMode() {
       title: translate('Default'),
       dataIndex: 'isDefault',
       key: 'isDefault',
-      onCell: (record, rowIndex) => {
+      onCell: () => {
         return {
           props: {
             style: {
@@ -72,7 +70,7 @@ export default function PaymentMode() {
       title: translate('enabled'),
       dataIndex: 'enabled',
       key: 'enabled',
-      onCell: (record, rowIndex) => {
+      onCell: () => {
         return {
           props: {
             style: {

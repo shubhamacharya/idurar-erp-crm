@@ -13,8 +13,6 @@ import { useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
-import { settingsAction } from '@/redux/settings/actions';
-
 export default function UpdateInvoiceModule({ config }) {
   const dispatch = useDispatch();
 

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { Tag, Row, Col } from 'antd';
+import { Row, Col } from 'antd';
 import useLanguage from '@/locale/useLanguage';
 
 import { useMoney } from '@/settings';

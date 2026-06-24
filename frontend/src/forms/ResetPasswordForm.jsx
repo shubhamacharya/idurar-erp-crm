@@ -1,8 +1,5 @@
-import React from 'react';
 import { Form, Input } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-
-import useLanguage from '@/locale/useLanguage';
+import { LockOutlined } from '@ant-design/icons';
 
 export default function ResetPasswordForm() {
   return (

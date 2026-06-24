@@ -1,20 +1,20 @@
-import { lazy, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import {} from 'react-router-dom';
 import {} from 'react-router-dom';
-import { Navigate, useLocation, useRoutes } from 'react-router-dom';
+import { useLocation, useRoutes } from 'react-router-dom';
 import { useAppContext } from '@/context/appContext';
 
 import routes from './routes';
 
 export default function AppRouter() {
   let location = useLocation();
-  const { state: stateApp, appContextAction } = useAppContext();
+  const { appContextAction } = useAppContext();
   const { app } = appContextAction;
 
   const routesList = [];
 
-  Object.entries(routes).forEach(([key, value]) => {
+  Object.entries(routes).forEach(([key, value]) => { // eslint-disable-line no-unused-vars
     routesList.push(...value);
   });
 

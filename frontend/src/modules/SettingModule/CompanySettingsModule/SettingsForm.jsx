@@ -1,7 +1,6 @@
 import { Form, Input, InputNumber, Select, Switch } from 'antd';
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import useLanguage from '@/locale/useLanguage';
-import { useSelector } from 'react-redux';
 
 const formItems = [
   {

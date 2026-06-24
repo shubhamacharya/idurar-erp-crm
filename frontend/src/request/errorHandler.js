@@ -53,7 +53,7 @@ const errorHandler = (error) => {
     const message = response.data && response.data.message;
 
     const errorText = message || codeMessage[response.status];
-    const { status, error } = response;
+    const { status } = response;
     notification.config({
       duration: 20,
       maxCount: 2,

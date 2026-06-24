@@ -55,11 +55,11 @@ export function SelectType() {
   );
 }
 
-export default function AdvancedSettingsForm({ isUpdateForm = false }) {
+export default function AdvancedSettingsForm() {
   const translate = useLanguage();
   const { result } = useSelector(selectCurrentItem);
   const [type, setType] = useState(null);
-  const options = ['number', 'text', 'date'];
+  // const options = ['number', 'text', 'date'];
 
   const handleChange = (value) => {
     setType(value);

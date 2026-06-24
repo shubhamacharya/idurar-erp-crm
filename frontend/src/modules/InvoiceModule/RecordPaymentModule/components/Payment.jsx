@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { Button, Row, Col, Descriptions, Tag, Divider } from 'antd';
+import { Button, Row, Col, Descriptions, Divider } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 import { FileTextOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
@@ -20,7 +20,7 @@ export default function Payment({ config, currentItem }) {
   const money = useMoney();
   const navigate = useNavigate();
 
-  const [itemslist, setItemsList] = useState([]);
+  const [itemslist, setItemsList] = useState([]); // eslint-disable-line no-unused-vars 
   const [currentErp, setCurrentErp] = useState(currentItem);
 
   const [client, setClient] = useState({});

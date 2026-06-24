@@ -13,6 +13,8 @@ export default function SidePanel({ config, topContent, bottomContent, fixHeader
   const { panel, collapsedBox } = crudContextAction;
   const [opacitySider, setOpacitySider] = useState(0);
   const [paddingTopSider, setPaddingTopSider] = useState('20px');
+  const [isSidePanelClose, setSidePanel] = useState(isPanelClose); // eslint-disable-line no-unused-vars
+  const [leftSider, setLeftSider] = useState(0); // eslint-disable-line no-unused-vars
 
   // const { state: stateApp, appContextAction } = useAppContext();
   // const { isNavMenuClose } = stateApp;

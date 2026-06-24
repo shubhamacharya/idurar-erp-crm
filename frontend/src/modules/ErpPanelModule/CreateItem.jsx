@@ -17,7 +17,6 @@ import { generate as uniqueId } from 'shortid';
 import Loading from '@/components/Loading';
 import {
   ArrowLeftOutlined,
-  ArrowRightOutlined,
   CloseCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
