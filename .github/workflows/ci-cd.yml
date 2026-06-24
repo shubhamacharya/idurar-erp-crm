@@ -69,6 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint-and-test
     if: github.event_name == 'push'
+    environment: staging
 
     outputs:
       image-tag: ${{ steps.meta.outputs.tag }}
@@ -138,6 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-push
     if: github.event_name == 'push'
+    environment: production
 
     steps:
       - name: SSH into EC2 and redeploy
