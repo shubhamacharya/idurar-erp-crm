@@ -195,7 +195,8 @@ resource "aws_security_group" "app" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.my_ip}/32"]   # your IP from terraform.tfvars
+    cidr_blocks = ["0.0.0.0/0"]
+    # cidr_blocks = ["${var.my_ip}/32"]   # your IP from terraform.tfvars
   }
 
   # All outbound allowed — EC2 needs to reach ECR, Atlas, SSM, apt repos
@@ -210,6 +211,28 @@ resource "aws_security_group" "app" {
 }
 
 # ── EC2 Instance ──────────────────────────────────────────────────────────────
+
+resource "tls_private_key" "ec2_key" {
+  algorithm = "ED25519"
+}
+
+resource "aws_key_pair" "ec2_key" {
+  key_name   = "${var.project_name}-key"
+  public_key = tls_private_key.ec2_key.public_key_openssh
+
+  tags = local.common_tags
+}
+
+# Store private key in SSM SecureString — encrypted at rest, free tier
+resource "aws_ssm_parameter" "ssh_private_key" {
+  name        = "/${var.project_name}/${var.environment}/SSH_PRIVATE_KEY"
+  type        = "SecureString"
+  value       = tls_private_key.ec2_key.private_key_openssh
+  description = "EC2 SSH private key"
+
+  tags = local.common_tags
+}
+
 
 resource "aws_instance" "app" {
   ami                    = data.aws_ami.ubuntu_2404.id

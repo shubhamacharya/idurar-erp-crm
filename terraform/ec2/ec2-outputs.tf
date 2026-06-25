@@ -22,8 +22,8 @@ output "backend_url" {
 
 output "ssh_private_key" {
   description = "EC2 SSH private key — pipe to a file to use"
-  value       = tls_private_key.ec2_key.private_key_openssh
-  sensitive   = true
+  value     = tls_private_key.ec2_key.private_key_openssh
+  sensitive = true
 }
 
 output "ssh_command" {

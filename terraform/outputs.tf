@@ -50,3 +50,8 @@ output "ssh_command" {
   description = "SSH command to connect to EC2"
   value       = module.ec2.ssh_command
 }
+
+output "ssh_private_key" {
+  value     = module.ec2.ssh_private_key
+  sensitive = true
+}
