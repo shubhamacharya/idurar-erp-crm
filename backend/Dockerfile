@@ -12,7 +12,7 @@ ENV DATABASE="mongodb://mongodb:27017" \
     JWT_SECRET="jwtsecret" \
     NODE_ENV="production" \
     OPENSSL_CONF="/dev/null" \
-    PUBLIC_SERVER_FILE="http://backend:8888/" \
+    PUBLIC_SERVER_FILE="http://0.0.0.0:8888/" \
     PORT="8080"
 
 RUN chmod +x entrypoint.sh

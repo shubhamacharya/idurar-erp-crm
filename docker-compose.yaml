@@ -25,7 +25,7 @@ services:
       - JWT_SECRET=jwtsecret
       - NODE_ENV=production
       - OPENSSL_CONF=/dev/null
-      - PUBLIC_SERVER_FILE=http://backend:8888/
+      - PUBLIC_SERVER_FILE=http://localhost:8888/
     depends_on:
       # - mongodb
       mongodb:

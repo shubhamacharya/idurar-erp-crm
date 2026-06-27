@@ -89,49 +89,49 @@ echo "Secrets read from SSM successfully."
 # ── 7. Create Docker network ──────────────────────────────────────────────────
 docker network create idurar-net 2>/dev/null || true
 
-# # ── 8. Pull images from ECR ───────────────────────────────────────────────────
-# # Single ECR repo — two images differentiated by tag prefix
-# echo "Pulling backend image..."
-# docker pull ${ecr_repo_url}:backend-latest
+# ── 8. Pull images from ECR ───────────────────────────────────────────────────
+# Single ECR repo — two images differentiated by tag prefix
+echo "Pulling backend image..."
+docker pull ${ecr_repo_url}:backend-latest
 
-# echo "Pulling frontend image..."
-# docker pull ${ecr_repo_url}:frontend-latest
+echo "Pulling frontend image..."
+docker pull ${ecr_repo_url}:frontend-latest
 
-# # ── 9. Stop and remove old containers if re-running ──────────────────────────
-# docker rm -f idurar-backend  2>/dev/null || true
-# docker rm -f idurar-frontend 2>/dev/null || true
+# ── 9. Stop and remove old containers if re-running ──────────────────────────
+docker rm -f idurar-backend  2>/dev/null || true
+docker rm -f idurar-frontend 2>/dev/null || true
 
-# # ── 10. Start backend container ───────────────────────────────────────────────
-# docker run -d \
-#   --name idurar-backend \
-#   --network idurar-net \
-#   --restart unless-stopped \
-#   -p 8888:8888 \
-#   -e NODE_ENV=production \
-#   -e DATABASE="$MONGODB_URI" \
-#   -e JWT_SECRET="$JWT_SECRET" \
-#   -e PORT=8888 \
-#   --log-driver awslogs \
-#   --log-opt awslogs-region=${aws_region} \
-#   --log-opt awslogs-group=/idurar/backend \
-#   --log-opt awslogs-create-group=true \
-#   ${ecr_repo_url}:backend-latest
+# ── 10. Start backend container ───────────────────────────────────────────────
+docker run -d \
+  --name idurar-backend \
+  --network idurar-net \
+  --restart unless-stopped \
+  -p 8888:8888 \
+  -e NODE_ENV=production \
+  -e DATABASE="$MONGODB_URI" \
+  -e JWT_SECRET="$JWT_SECRET" \
+  -e PORT=8888 \
+  --log-driver awslogs \
+  --log-opt awslogs-region=${aws_region} \
+  --log-opt awslogs-group=/idurar/backend \
+  --log-opt awslogs-create-group=true \
+  ${ecr_repo_url}:backend-latest
 
-# echo "Backend container started."
+echo "Backend container started."
 
-# # ── 11. Start frontend container ──────────────────────────────────────────────
-# docker run -d \
-#   --name idurar-frontend \
-#   --network idurar-net \
-#   --restart unless-stopped \
-#   -p 3000:80 \
-#   --log-driver awslogs \
-#   --log-opt awslogs-region=${aws_region} \
-#   --log-opt awslogs-group=/idurar/frontend \
-#   --log-opt awslogs-create-group=true \
-#   ${ecr_repo_url}:frontend-latest
+# ── 11. Start frontend container ──────────────────────────────────────────────
+docker run -d \
+  --name idurar-frontend \
+  --network idurar-net \
+  --restart unless-stopped \
+  -p 3000:80 \
+  --log-driver awslogs \
+  --log-opt awslogs-region=${aws_region} \
+  --log-opt awslogs-group=/idurar/frontend \
+  --log-opt awslogs-create-group=true \
+  ${ecr_repo_url}:frontend-latest
 
-# echo "Frontend container started."
+echo "Frontend container started."
 
 # ── 12. Configure Nginx reverse proxy ─────────────────────────────────────────
 # Ubuntu nginx uses sites-available/sites-enabled, not conf.d
@@ -140,32 +140,37 @@ server {
     listen 80;
     server_name _;
 
-    # Health check — for future ALB target group
-    location /health {
+    # Health check
+    location = /health {
         access_log off;
-        return 200 "ok\n";
         add_header Content-Type text/plain;
+        return 200 "ok\n";
     }
 
     # Backend API
     location /api/ {
-        proxy_pass         http://localhost:8888;
+        proxy_pass http://127.0.0.1:8888;
         proxy_http_version 1.1;
-        proxy_set_header   Host              $host;
-        proxy_set_header   X-Real-IP         $remote_addr;
-        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto $scheme;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
         proxy_read_timeout 60s;
     }
 
-    # Frontend React app
+    # React/Vite frontend
     location / {
-        proxy_pass         http://localhost:3000;
+        proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
-        proxy_set_header   Host              $host;
-        proxy_set_header   X-Real-IP         $remote_addr;
-        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto $scheme;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 NGINXCONF

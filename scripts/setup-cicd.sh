@@ -97,7 +97,7 @@ jobs:
         working-directory: frontend
         run: npm run build
         env:
-          VITE_BACKEND_URL: http://localhost:8888
+          VITE_BACKEND_URL: http://0.0.0.0:8888
 
   # ── Job 2: Build & Push to ECR ────────────────────────────────────────────
   build-and-push:
@@ -197,11 +197,11 @@ jobs:
 
             echo ""
             echo "=== Backend health check (via Nginx) ==="
-            curl -sf http://localhost/api/health && echo "Backend: OK" || echo "Backend: FAIL"
+            curl -sf http://0.0.0.0/api/health && echo "Backend: OK" || echo "Backend: FAIL"
 
             echo ""
             echo "=== Frontend health check (via Nginx) ==="
-            curl -sf http://localhost/health && echo "Frontend: OK" || echo "Frontend: FAIL"
+            curl -sf http://0.0.0.0/health && echo "Frontend: OK" || echo "Frontend: FAIL"
 EOF
 log_success ".github/workflows/ci-cd.yml created."
 

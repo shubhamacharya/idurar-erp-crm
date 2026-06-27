@@ -8,9 +8,9 @@ RUN npm ci
 
 COPY . .
 
-ENV VITE_BACKEND_SERVER=http://localhost:8080/
+ENV VITE_BACKEND_SERVER=http://0.0.0.0:8080/
 ENV VITE_DEV_REMOTE=remote
-ENV PUBLIC_SERVER_FILE=http://localhost:8888/
+ENV PUBLIC_SERVER_FILE=http://0.0.0.0:8888/
 
 RUN npm run build
 

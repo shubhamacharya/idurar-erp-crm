@@ -142,6 +142,9 @@ push_secret() {
   if [[ -n "$value" ]]; then
     printf "  Setting %-30s ... " "$name"
     echo "$value" | gh secret set "$name" --repo "$GITHUB_REPO"
+    printf '%s' "$value" | gh secret set "$name" \
+    --repo "$GITHUB_REPO" \
+    --env production
     echo -e "${GREEN}done${NC}"
   else
     log_skip "$name"
